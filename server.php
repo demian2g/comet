@@ -5,6 +5,7 @@ require_once __DIR__ . '/classes/DB.php';
 exec("hostname -I | awk '{print $1}'", $ip);
 $ip = $ip[0];
 $app = new Comet\Comet(['host' => $ip]);
+$db = DB::getDB();
 
 $app->get('/hello', 
     function ($request, $response) {              

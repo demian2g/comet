@@ -1,16 +1,26 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/classes/DB.php';
-ini_set("zlib.output_compression", 1);
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\LineFormatter;
 exec("hostname -I | awk '{print $1}'", $ip);
 $ip = $ip[0];
-$app = new Comet\Comet(['host' => $ip]);
 $db = DB::getDB();
+
+$formatter = new LineFormatter("\n%datetime% >> %channel%:%level_name% >> %message%", "Y-m-d H:i:s");
+$stream = new StreamHandler(__DIR__ . '/log/app.log', Logger::INFO);
+$stream->setFormatter($formatter);
+$logger = new Logger('server');
+$logger->pushHandler($stream);
+
+
+$app = new Comet\Comet(['host' => $ip, 'debug' => 'true', 'logger' => $logger]);
 
 $app->get('/hello', 
     function ($request, $response) use ($db) {
-        $result = $db->query("SELECT TOP 10 * FROM Person.Contact")->fetchAll();
+        $result = $db->query("SELECT TOP 10 * FROM Production.Product")->fetchAll();
         return $response
             ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
             ->with(gzencode(json_encode($result)));

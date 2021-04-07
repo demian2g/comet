@@ -5,10 +5,10 @@ class DB {
     private static $db;
     private static $defaultConfig = [
         'APP' => 'MSSQL php api',
-        'ConnectionPooling' => 1,
+//        'ConnectionPooling' => 1,
         'Database' => 'AdventureWorks',
-        'LoginTimeout' => 10,
-        'Server' => 'WIN-2KJRZPPRC49'
+        'LoginTimeout' => 5,
+        'Server' => '192.168.1.226'
     ];
     private static $user = 'user';
     private static $password = '1234';

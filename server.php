@@ -29,7 +29,7 @@ $app->get('/hello',
                 ->with(gzencode(json_encode($result)));
         } else {
             return $response
-                ->withText($db->errorInfo());
+                ->with($db->errorInfo());
         }
 });
 $app->run();

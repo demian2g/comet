@@ -20,7 +20,8 @@ $app = new Comet\Comet(['host' => $ip, 'debug' => 'true', 'logger' => $logger]);
 
 $app->get('/hello', 
     function ($request, $response) use ($db) {
-        $result = $db->query("SELECT TOP 10 * FROM Production.Product")->fetchAll();
+        $result = $db->query("SELECT TOP 10 * FROM Production.Product")->fetchAll(PDO::FETCH_ASSOC);
+        $result = array_merge($result, DB::getAllowedTables());
         return $response
             ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
             ->with(gzencode(json_encode($result)));

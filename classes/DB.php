@@ -26,6 +26,10 @@ class DB {
         return self::$db;
     }
 
+    public static function getAllowedTables() {
+        return self::$tables;
+    }
+
     public static function tableIsAllowed($tableName) {
         // TODO: implement user-defined tables list check
         return in_array($tableName, self::$tables);

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/classes/DB.php';
+ini_set("zlib.output_compression", 1);
 
 exec("hostname -I | awk '{print $1}'", $ip);
 $ip = $ip[0];

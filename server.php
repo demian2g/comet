@@ -8,8 +8,9 @@ $app = new Comet\Comet(['host' => $ip]);
 $db = DB::getDB();
 
 $app->get('/hello', 
-    function ($request, $response) {              
+    function ($request, $response) use ($db) {
+        $result = $db->query("SELECT TOP 10 * FROM Person.Contact")->fetchAll();
         return $response
-            ->with($response->getAttributes());
+            ->with($result);
 });
 $app->run();

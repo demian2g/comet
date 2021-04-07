@@ -5,7 +5,7 @@ class DB {
     private static $db;
     private static $defaultConfig = [
         'APP' => 'MSSQL php api',
-//        'ConnectionPooling' => 1,
+        'ConnectionPooling' => 1,
         'Database' => 'AdventureWorks',
         'LoginTimeout' => 5,
         'Server' => '192.168.1.226'

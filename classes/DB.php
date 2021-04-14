@@ -16,7 +16,7 @@ class DB {
             try {
                 self::$db = new PDO('sqlsrv:' . self::getConnectionString(), self::$user, self::$password);
             } catch (PDOException $p) {
-                echo $p->getMessage(); die();
+                echo $p->getMessage() . "\r\n"; die();
             }
         }
         if (empty(self::$tables)) {

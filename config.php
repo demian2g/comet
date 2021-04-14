@@ -24,6 +24,7 @@ return [
         'Server' => '192.168.1.226'
     ],
     'PHPProxy' => [
+        'port' => 80,
         'host' => $ip,
         'debug' => true,
         'logger' => $logger

@@ -44,21 +44,26 @@ class DB {
             if (isset($configFromFile['MSSQL']))
                 $configFromFile = $configFromFile['MSSQL'];
         }
+        if (isset($configFromFile['User']) && !empty($configFromFile['User'])) {
+            self::$user = $configFromFile['User'];
+        }
+        if (isset($configFromFile['Password']) && !empty($configFromFile['Password'])) {
+            self::$password = $configFromFile['Password'];
+        }
         if (is_file(__DIR__ . '/../config-local.php')) {
             $configFromLocalFile = require __DIR__ . '/../config-local.php';
             if (isset($configFromLocalFile['MSSQL'])) {
-                if (isset($configFromLocalFile['MSSQL']['User']) && !empty($configFromLocalFile['MSSQL']['User'])) {
+                if (isset($configFromLocalFile['MSSQL']['User']) && !empty($configFromLocalFile['MSSQL']['User']))
                     self::$user = $configFromLocalFile['MSSQL']['User'];
-                }
-                unset($configFromLocalFile['MSSQL']['User']);
-                if (isset($configFromLocalFile['MSSQL']['Password']) && !empty($configFromLocalFile['MSSQL']['Password'])) {
+                if (isset($configFromLocalFile['MSSQL']['Password']) && !empty($configFromLocalFile['MSSQL']['Password']))
                     self::$password = $configFromLocalFile['MSSQL']['Password'];
-                }
-                unset($configFromLocalFile['MSSQL']['Password']);
                 $configFromFile = array_merge($configFromFile, $configFromLocalFile['MSSQL']);
             }
         }
-        return array_merge(self::$defaultConfig, $configFromFile);
+        $configFromFile = array_merge(self::$defaultConfig, $configFromFile);
+        unset($configFromFile['User']);
+        unset($configFromFile['Password']);
+        return $configFromFile;
     }
 
     private static function getConnectionString() {

@@ -13,18 +13,26 @@ if (is_file('config-local.php')) {
 
 $app = new Comet\Comet($config['PHPProxy']);
 
-$app->get('/hello', 
+$app->get('/get',
     function ($request, $response) use ($db) {
-        $fetchReady = $db->query("SELECT TOP 10 * FROM Production.Product");
-        if ($fetchReady) {
-            $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
-            $result = array_merge($result, $request->getQueryParams());
+        $params = $request->getQueryParams();
+        if (isset($params['table']) && !empty($params['table'])) {
+            if (DB::tableIsAllowed($params['table'])) {
+                $fetchReady = $db->query("SELECT * FROM " . $params['table']);
+                if ($fetchReady) {
+                    $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
+                    return $response
+                        ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
+                        ->with(gzencode(json_encode($result)));
+                } else {
+                    return $response
+                        ->with($db->errorInfo());
+                }
+            } else
+                return $response
+                    ->with('Wrong TableName');
+        } else
             return $response
-                ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
-                ->with(gzencode(json_encode($result)));
-        } else {
-            return $response
-                ->with($db->errorInfo());
-        }
+                ->with('provide query ?table=Schema.TableName');
 });
 $app->run();

@@ -13,7 +13,11 @@ class DB {
 
     public static function getDB() {
         if (!self::$db || empty(self::$db)) {
-            self::$db = new PDO('sqlsrv:' . self::getConnectionString(), self::$user, self::$password);
+            try {
+                self::$db = new PDO('sqlsrv:' . self::getConnectionString(), self::$user, self::$password);
+            } catch (PDOException $p) {
+                echo $p->getMessage(); die();
+            }
         }
         if (empty(self::$tables)) {
             self::$tables = self::$db
@@ -35,12 +39,12 @@ class DB {
     private static function getConfig() {
         $configFromFile = [];
         if (is_file(__DIR__ . '../config.php')) {
-            $configFromFile = require_once __DIR__ . '../config.php';
+            $configFromFile = require __DIR__ . '../config.php';
             if (isset($configFromFile['MSSQL']))
                 $configFromFile = $configFromFile['MSSQL'];
         }
         if (is_file(__DIR__ . '../config-local.php')) {
-            $configFromFile = require_once __DIR__ . '../config-local.php';
+            $configFromFile = require __DIR__ . '../config-local.php';
             if (isset($configFromFile['MSSQL']))
                 $configFromFile = array_merge($configFromFile, $configFromFile['MSSQL']);
         }

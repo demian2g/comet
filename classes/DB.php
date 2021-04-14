@@ -44,9 +44,9 @@ class DB {
                 $configFromFile = $configFromFile['MSSQL'];
         }
         if (is_file(__DIR__ . '/../config-local.php')) {
-            $configFromFile = require __DIR__ . '/../config-local.php';
-            if (isset($configFromFile['MSSQL']))
-                $configFromFile = array_merge($configFromFile, $configFromFile['MSSQL']);
+            $configFromLocalFile = require __DIR__ . '/../config-local.php';
+            if (isset($configFromLocalFile['MSSQL']))
+                $configFromFile = array_merge($configFromFile, $configFromLocalFile['MSSQL']);
         }
         return array_merge(self::$defaultConfig, $configFromFile);
     }

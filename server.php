@@ -3,10 +3,10 @@ require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/classes/DB.php';
 
 $db = DB::getDB();
-$config = require_once "config.php";
+$config = require "config.php";
 
-if (is_file(__DIR__ . 'config-local.php')) {
-    $configFromFile = require __DIR__ . '/config-local.php';
+if (is_file('config-local.php')) {
+    $configFromFile = require 'config-local.php';
     if (isset($configFromFile['PHPProxy']))
         $config = array_merge($config, $configFromFile);
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Main MSSQL params to override "Database", "LoginTimeout", "Server"
+ * Main MSSQL params to override in config-local.php : "Database", "Server", "User", "Password"
  * For more references refer to https://www.php.net/manual/ru/ref.pdo-sqlsrv.connection.php
  */
 

@@ -44,6 +44,26 @@ $ git clone https://github.com/demian2g/comet.git proxy && cd proxy
 $ wget https://getcomposer.org/download/2.0.12/composer.phar
 $ php composer.phar update
 ```
+#### SystemD service /etc/systemd/system/proxy.service
+
+```bash
+[Unit]
+Description=MSSQL PHP Api Proxy Service
+After=network.target
+Wants=network.target
+StartLimitIntervalSec=1
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=api
+ExecStart=/usr/bin/env php /home/api/proxy/server.php start
+StartLimitBurst=5
+                                                                                                                                                                                                                                                                               
+[Install]                                                                                                                                                                                                                                                                      
+WantedBy=multi-user.target
+```
 # Comet
 
 Comet is a modern PHP framework for building blazing fast REST APIs, CRUDs, admin panels and microservices. 

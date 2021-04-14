@@ -18,7 +18,7 @@ $app->get('/hello',
         $fetchReady = $db->query("SELECT TOP 10 * FROM Production.Product");
         if ($fetchReady) {
             $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
-            $result = array_merge($result, DB::getAllowedTables());
+            $result = array_merge($result, $request->getQueryParams());
             return $response
                 ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
                 ->with(gzencode(json_encode($result)));

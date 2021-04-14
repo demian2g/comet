@@ -26,7 +26,7 @@ return [
     'PHPProxy' => [
         'port' => 80,
         'host' => $ip,
-        'debug' => true,
+        'debug' => 'true',
         'logger' => $logger
     ],
 ];

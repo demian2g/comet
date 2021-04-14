@@ -38,12 +38,6 @@ CipherString = DEFAULT@SECLEVEL=1
 ```bash
 openssl_conf = default_conf
 ```
-
-```bash
-$ git clone https://github.com/demian2g/comet.git proxy && cd proxy
-$ wget https://getcomposer.org/download/2.0.12/composer.phar
-$ php composer.phar update
-```
 #### SystemD service /etc/systemd/system/proxy.service
 
 ```bash
@@ -63,6 +57,32 @@ StartLimitBurst=5
                                                                                                                                                                                                                                                                                
 [Install]                                                                                                                                                                                                                                                                      
 WantedBy=multi-user.target
+```
+
+```bash
+$ git clone https://github.com/demian2g/comet.git proxy && cd proxy
+$ wget https://getcomposer.org/download/2.0.12/composer.phar
+$ php composer.phar update
+```
+
+#### URL to GET requests:
+
+```bash
+http://XXX.XXX.XXX.XXX:8081/get?table=Schema.Tablename
+```
+
+#### config-local.php:
+
+```php
+return [
+    'MSSQL' => [
+        'Server' => '192.168.1.211',
+        'Database' => 'AdventureWorks',
+        'User' => 'user',
+        'Password' => '1234'
+    ]
+];
+
 ```
 # Comet
 

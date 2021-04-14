@@ -34,7 +34,7 @@ class DB {
 
     public static function tableIsAllowed($tableName) {
         // TODO: implement user-defined tables list check
-        return in_array($tableName, self::$tables);
+        return in_array($tableName, array_values(self::$tables));
     }
 
     private static function getConfig() {

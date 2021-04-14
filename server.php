@@ -16,9 +16,6 @@ $app = new Comet\Comet($config['PHPProxy']);
 $app->get('/get',
     function ($request, $response) use ($db) {
         $params = $request->getQueryParams();
-        return $response
-            ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
-            ->with(gzencode(json_encode(DB::getAllowedTables())));
         if (isset($params['table']) && !empty($params['table'])) {
             if (DB::tableIsAllowed($params['table'])) {
                 $fetchReady = $db->query("SELECT * FROM " . $params['table']);

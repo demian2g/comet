@@ -38,13 +38,13 @@ class DB {
 
     private static function getConfig() {
         $configFromFile = [];
-        if (is_file(__DIR__ . '../config.php')) {
-            $configFromFile = require __DIR__ . '../config.php';
+        if (is_file(__DIR__ . '/../config.php')) {
+            $configFromFile = require __DIR__ . '/../config.php';
             if (isset($configFromFile['MSSQL']))
                 $configFromFile = $configFromFile['MSSQL'];
         }
-        if (is_file(__DIR__ . '../config-local.php')) {
-            $configFromFile = require __DIR__ . '../config-local.php';
+        if (is_file(__DIR__ . '/../config-local.php')) {
+            $configFromFile = require __DIR__ . '/../config-local.php';
             if (isset($configFromFile['MSSQL']))
                 $configFromFile = array_merge($configFromFile, $configFromFile['MSSQL']);
         }

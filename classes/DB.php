@@ -49,12 +49,12 @@ class DB {
             if (isset($configFromLocalFile['MSSQL'])) {
                 if (isset($configFromLocalFile['MSSQL']['User']) && !empty($configFromLocalFile['MSSQL']['User'])) {
                     self::$user = $configFromLocalFile['MSSQL']['User'];
-                    unset($configFromLocalFile['MSSQL']['User']);
                 }
+                unset($configFromLocalFile['MSSQL']['User']);
                 if (isset($configFromLocalFile['MSSQL']['Password']) && !empty($configFromLocalFile['MSSQL']['Password'])) {
                     self::$password = $configFromLocalFile['MSSQL']['Password'];
-                    unset($configFromLocalFile['MSSQL']['Password']);
                 }
+                unset($configFromLocalFile['MSSQL']['Password']);
                 $configFromFile = array_merge($configFromFile, $configFromLocalFile['MSSQL']);
             }
         }

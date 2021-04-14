@@ -5,11 +5,12 @@ class DB {
     private static $db;
     private static $defaultConfig = [
         'APP' => 'MSSQL php api',
-        'ConnectionPooling' => 1
+        'ConnectionPooling' => 1,
+        'LoginTimeout' => 5,
     ];
     private static $tables = [];
     private static $user = 'user';
-    private static $password = '1234';
+    private static $password = 'password';
 
     public static function getDB() {
         if (!self::$db || empty(self::$db)) {
@@ -45,8 +46,17 @@ class DB {
         }
         if (is_file(__DIR__ . '/../config-local.php')) {
             $configFromLocalFile = require __DIR__ . '/../config-local.php';
-            if (isset($configFromLocalFile['MSSQL']))
+            if (isset($configFromLocalFile['MSSQL'])) {
+                if (isset($configFromLocalFile['MSSQL']['User']) && !empty($configFromLocalFile['MSSQL']['User'])) {
+                    self::$user = $configFromLocalFile['MSSQL']['User'];
+                    unset($configFromLocalFile['MSSQL']['User']);
+                }
+                if (isset($configFromLocalFile['MSSQL']['Password']) && !empty($configFromLocalFile['MSSQL']['Password'])) {
+                    self::$password = $configFromLocalFile['MSSQL']['Password'];
+                    unset($configFromLocalFile['MSSQL']['Password']);
+                }
                 $configFromFile = array_merge($configFromFile, $configFromLocalFile['MSSQL']);
+            }
         }
         return array_merge(self::$defaultConfig, $configFromFile);
     }

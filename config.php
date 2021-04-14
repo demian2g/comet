@@ -20,7 +20,8 @@ $logger->pushHandler($stream);
 return [
     'MSSQL' => [
         'Database' => 'AdventureWorks',
-        'LoginTimeout' => 5,
+        'User' => 'user',
+        'Password' => '1234',
         'Server' => '192.168.1.226'
     ],
     'PHPProxy' => [

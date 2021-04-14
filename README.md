@@ -2,6 +2,48 @@
   <img width="600" height="250" src="docs/logo.png">
 </p>
 
+## Installation api proxy on Ubuntu 20.04
+
+```bash
+# curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+# curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+# apt update
+# apt install ssh php php-curl php-mbstring php-zip php-dev 
+# ACCEPT_EULA=Y apt install -y msodbcsql17 unixodbc-dev
+# pecl channel-update pecl.php.net
+# pecl install sqlsrv
+# pecl install pdo_sqlsrv
+# echo "extension=pdo.so" >> /etc/php/7.4/cli/php.ini
+# echo "extension=pdo_sqlsrv.so" >> /etc/php/7.4/cli/php.ini
+# echo "extension=sqlsrv.so" >> /etc/php/7.4/cli/php.ini
+# rm -rf /etc/php/7.4/cli/conf.d/10-pdo.ini
+```
+
+#### tail /etc/ssl/openssl.cnf
+
+```bash
+[default_conf]
+ssl_conf = ssl_sect
+
+[ssl_sect]
+system_default = system_default_sect
+
+[system_default_sect]
+MinProtocol = TLSv1
+CipherString = DEFAULT@SECLEVEL=1
+```
+
+#### head /etc/ssl/openssl.cnf
+
+```bash
+openssl_conf = default_conf
+```
+
+```bash
+$ git clone https://github.com/demian2g/comet.git proxy && cd proxy
+$ wget https://getcomposer.org/download/2.0.12/composer.phar
+$ php composer.phar update
+```
 # Comet
 
 Comet is a modern PHP framework for building blazing fast REST APIs, CRUDs, admin panels and microservices. 

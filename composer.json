@@ -13,7 +13,10 @@
         "slim/slim": "^4.6",
         "guzzlehttp/psr7": "^1.7",
         "monolog/monolog": "*",
-        "rakit/validation": "^1.4"
+        "rakit/validation": "^1.4",
+        "ext-zlib": "*",
+        "ext-json": "*",
+        "ext-pdo": "*"
     },
     "autoload": {
         "psr-4": { "Comet\\": "src/" }

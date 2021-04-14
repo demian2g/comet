@@ -5,10 +5,7 @@ class DB {
     private static $db;
     private static $defaultConfig = [
         'APP' => 'MSSQL php api',
-        'ConnectionPooling' => 1,
-        'Database' => 'AdventureWorks',
-        'LoginTimeout' => 5,
-        'Server' => '192.168.1.226'
+        'ConnectionPooling' => 1
     ];
     private static $tables = [];
     private static $user = 'user';
@@ -36,7 +33,17 @@ class DB {
     }
 
     private static function getConfig() {
-        $configFromFile = []; // get config from file
+        $configFromFile = [];
+        if (is_file(__DIR__ . '../config.php')) {
+            $configFromFile = require_once __DIR__ . '../config.php';
+            if (isset($configFromFile['MSSQL']))
+                $configFromFile = $configFromFile['MSSQL'];
+        }
+        if (is_file(__DIR__ . '../config-local.php')) {
+            $configFromFile = require_once __DIR__ . '../config-local.php';
+            if (isset($configFromFile['MSSQL']))
+                $configFromFile = array_merge($configFromFile, $configFromFile['MSSQL']);
+        }
         return array_merge(self::$defaultConfig, $configFromFile);
     }
 

@@ -9,6 +9,7 @@ out
 app.php
 app.log
 debug.php
+config-local.php
 debug.log
 composer.lock
 Makefile

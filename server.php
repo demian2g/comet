@@ -2,21 +2,16 @@
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/classes/DB.php';
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Monolog\Formatter\LineFormatter;
-exec("hostname -I | awk '{print $1}'", $ip);
-$ip = $ip[0];
 $db = DB::getDB();
+$config = require_once "config.php";
 
-$formatter = new LineFormatter("\n%datetime% >> %channel%:%level_name% >> %message%", "Y-m-d H:i:s");
-$stream = new StreamHandler(__DIR__ . '/log/app.log', Logger::INFO);
-$stream->setFormatter($formatter);
-$logger = new Logger('server');
-$logger->pushHandler($stream);
+if (is_file(__DIR__ . '../config-local.php')) {
+    $configFromFile = require_once __DIR__ . '../config-local.php';
+    if (isset($configFromFile['PHPProxy']))
+        $config = array_merge($config, $configFromFile);
+}
 
-
-$app = new Comet\Comet(['host' => $ip, 'debug' => 'true', 'logger' => $logger]);
+$app = new Comet\Comet($config['PHPProxy']);
 
 $app->get('/hello', 
     function ($request, $response) use ($db) {

@@ -15,7 +15,17 @@ $app = new Comet\Comet($config['PHPProxy']);
 
 $app->get('/kb7',
     function ($request, $response) use ($db) {
-        $fetchReady = $db->query("SELECT TOP 10 * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
+        $params = $request->getQueryParams();
+        $where = [];
+        if (!empty($params)) {
+            foreach ($params as $key => $value) {
+                $where[] =  '[' . $key . '] = "' . $value . '"';
+            }
+            $where = join(' AND ', $where);
+            $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where);
+        } else {
+            $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
+        }
         if ($fetchReady) {
             $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
             return $response

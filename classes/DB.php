@@ -22,7 +22,7 @@ class DB {
             }
         }
         if (empty(self::$tables)) {
-            self::$tables = self::$db
+            self::$tables = $d
                 ->query("SELECT TABLE_SCHEMA + cast('.' as varchar) + TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
                 ->fetchAll(PDO::FETCH_COLUMN);
         }

@@ -13,6 +13,42 @@ if (is_file('config-local.php')) {
 
 $app = new Comet\Comet($config['PHPProxy']);
 
+$app->get('/kb7',
+    function ($request, $response) use ($db) {
+        $fetchReady = $db->query("SELECT [ID]
+                                      ,[NPE]
+                                      ,[DAYZ]
+                                      ,[TIMZ]
+                                      ,[DAYRW]
+                                      ,[TIMRW]
+                                      ,[DAYW]
+                                      ,[TIMW]
+                                      ,[PKZ]
+                                      ,[PKR]
+                                      ,[HARP]
+                                      ,[HART]
+                                      ,[AMP]
+                                      ,[RZ]
+                                      ,[PREVDRW]
+                                      ,[PREVTRW]
+                                      ,[DAYRW_ZL]
+                                      ,[TIMRW_ZL]
+                                      ,[PRIZ_ZL]
+                                      ,[PKF]
+                                      ,[NPEN]
+                                  FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
+        if ($fetchReady) {
+            $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
+            return $response
+                ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
+                ->with(gzencode(json_encode($result)));
+        } else {
+            return $response
+                ->with($db->errorInfo());
+        }
+    }
+);
+
 $app->get('/get',
     function ($request, $response) use ($db) {
         $params = $request->getQueryParams();

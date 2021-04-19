@@ -19,7 +19,7 @@ $app->get('/kb7',
         $where = [];
         if (!empty($params)) {
             foreach ($params as $key => $value) {
-                $where[] =  '[' . $key . '] = "' . $value . '"';
+                $where[] =  $key . ' = "' . $value . '"';
             }
             $where = join(' AND ', $where);
             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where);

@@ -13,20 +13,19 @@ class DB {
     private static $password = 'password';
 
     public static function getDB() {
-        $d = null;
         if (!self::$db || empty(self::$db)) {
             try {
-                $d = new PDO('sqlsrv:' . self::getConnectionString(), self::$user, self::$password);
+                self::$db = new PDO('sqlsrv:' . self::getConnectionString(), self::$user, self::$password);
             } catch (PDOException $p) {
                 echo $p->getMessage() . ": " . self::getConnectionString() . "\r\n"; die();
             }
         }
         if (empty(self::$tables)) {
-            self::$tables = $d
+            self::$tables = self::$db
                 ->query("SELECT TABLE_SCHEMA + cast('.' as varchar) + TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
                 ->fetchAll(PDO::FETCH_COLUMN);
         }
-        return $d;
+        return self::$db;
     }
 
     public static function getAllowedTables() {

@@ -22,18 +22,20 @@ $app->get('/kb7',
                 $where[] =  $key . ' = "' . $value . '"';
             }
             $where = join(' AND ', $where);
-            $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where);
+            return $response->with($where);
+//            $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where);
         } else {
             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
-        }
-        if ($fetchReady) {
-            $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
-            return $response
-                ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
-                ->with(gzencode(json_encode($result)));
-        } else {
-            return $response
-                ->with($db->errorInfo());
+            if ($fetchReady) {
+                $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
+                return $response
+//                ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
+//                ->with(gzencode(json_encode($result)));
+                    ->with($result);
+            } else {
+                return $response
+                    ->with($db->errorInfo());
+            }
         }
     }
 );
@@ -47,8 +49,9 @@ $app->get('/get',
                 if ($fetchReady) {
                     $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
                     return $response
-                        ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
-                        ->with(gzencode(json_encode($result)));
+//                        ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
+//                        ->with(gzencode(json_encode($result)));
+                        ->with($result);
                 } else {
                     return $response
                         ->with($db->errorInfo());

@@ -8,35 +8,14 @@ $config = require "config.php";
 if (is_file('config-local.php')) {
     $configFromFile = require 'config-local.php';
     if (isset($configFromFile['PHPProxy']))
-        $config = array_merge($config, $configFromFile);
+        $config = array_merge_recursive($config, $configFromFile);
 }
 
 $app = new Comet\Comet($config['PHPProxy']);
 
 $app->get('/kb7',
     function ($request, $response) use ($db) {
-        $fetchReady = $db->query("SELECT [ID]
-                                      ,[NPE]
-                                      ,[DAYZ]
-                                      ,[TIMZ]
-                                      ,[DAYRW]
-                                      ,[TIMRW]
-                                      ,[DAYW]
-                                      ,[TIMW]
-                                      ,[PKZ]
-                                      ,[PKR]
-                                      ,[HARP]
-                                      ,[HART]
-                                      ,[AMP]
-                                      ,[RZ]
-                                      ,[PREVDRW]
-                                      ,[PREVTRW]
-                                      ,[DAYRW_ZL]
-                                      ,[TIMRW_ZL]
-                                      ,[PRIZ_ZL]
-                                      ,[PKF]
-                                      ,[NPEN]
-                                  FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
+        $fetchReady = $db->query("SELECT TOP 10 * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
         if ($fetchReady) {
             $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
             return $response

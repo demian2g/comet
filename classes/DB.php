@@ -13,9 +13,10 @@ class DB {
     private static $password = 'password';
 
     public static function getDB() {
+        $d = null;
         if (!self::$db || empty(self::$db)) {
             try {
-                self::$db = new PDO('sqlsrv:' . self::getConnectionString(), self::$user, self::$password);
+                $d = new PDO('sqlsrv:' . self::getConnectionString(), self::$user, self::$password);
             } catch (PDOException $p) {
                 echo $p->getMessage() . ": " . self::getConnectionString() . "\r\n"; die();
             }
@@ -25,7 +26,7 @@ class DB {
                 ->query("SELECT TABLE_SCHEMA + cast('.' as varchar) + TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'")
                 ->fetchAll(PDO::FETCH_COLUMN);
         }
-        return self::$db;
+        return $d;
     }
 
     public static function getAllowedTables() {

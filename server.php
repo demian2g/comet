@@ -43,8 +43,18 @@ $app->get('/get',
     function ($request, $response) use ($db) {
         $params = $request->getQueryParams();
         if (isset($params['table']) && !empty($params['table'])) {
+            $qParams = array_merge([], $params);
+            unset($qParams['table']);
             if (DB::tableIsAllowed($params['table'])) {
-                $fetchReady = $db->query("SELECT * FROM " . $params['table']);
+                $where = [];
+                if (!empty($qParams)) {
+                    foreach ($qParams as $key => $value) {
+                        $where[] =  $key . ' = ' . $value;
+                    }
+                    $where = join(' AND ', $where);
+                    $fetchReady = $db->query("SELECT * FROM " . $params['table'] . " WHERE " . $where);
+                } else
+                    $fetchReady = $db->query("SELECT * FROM " . $params['table']);
                 if ($fetchReady) {
                     $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
                     return $response

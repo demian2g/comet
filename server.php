@@ -22,20 +22,19 @@ $app->get('/kb7',
                 $where[] =  $key . ' = "' . $value . '"';
             }
             $where = join(' AND ', $where);
-            return $response->with($where);
-//            $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where);
+            $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where);
         } else {
             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
-            if ($fetchReady) {
-                $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
-                return $response
+        }
+        if ($fetchReady) {
+            $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
+            return $response
 //                ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
 //                ->with(gzencode(json_encode($result)));
-                    ->with($result);
-            } else {
-                return $response
-                    ->with($db->errorInfo());
-            }
+                ->with($result);
+        } else {
+            return $response
+                ->with($db->errorInfo());
         }
     }
 );

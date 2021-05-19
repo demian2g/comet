@@ -149,7 +149,7 @@ $app->get('/datetime1',
                 $end            = $params['end'];
                 $where[] = "(CAST(DAYRW as date) BETWEEN '" . $start . "' AND '". $end . "')";
 
-                if ($params['start'] && $params['end']) {
+                if ($params['start_time'] && $params['end_time']) {
                     $start_time     = $params['start_time'];
                     $end_time       = $params['end_time'];
                     $where[] =  "(CAST(TIMRW as time) BETWEEN '" . $start_time . "' AND '". $end_time ."')";

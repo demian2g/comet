@@ -175,23 +175,22 @@ $app->get('/datetime1',
 $app->get('/datetime2',
     function ($request, $response) use ($db) {
         $params = $request->getQueryParams();
-
         // $where = "(CAST(DAYRW_ZL as date) BETWEEN '2021-04-30' AND '2021-04-30') AND (CAST(TIMRW_ZL as time) BETWEEN '08:00:00' AND '19:59:59') AND (NPE > 0) ORDER BY TIMRW_ZL ASC";
-        $where = "(CAST(TIMRW_ZL as time) BETWEEN '";
 
         if (!empty($params)) {
-            if ($params['start'] && $params['end']) {
-                
-                $start_time     = $params['start_time'];
-                $end_time       = $params['end_time'];
-                $where .=  $start_time . "' AND '". $end_time ."') AND (NPE > 0)";
-
+            $where = ['NPE > 0'];
+            if (isset($params['start']) && isset($params['end'])) {
                 $start          = $params['start'];
                 $end            = $params['end'];
-                $where .= " AND (CAST(DAYRW_ZL as date) BETWEEN '" . $start . "' AND '". $end . "')";
+                $where[] = "(CAST(DAYRW_ZL as date) BETWEEN '" . $start . "' AND '". $end . "')";
+
+                if (isset($params['start_time']) && isset($params['end_time'])) {
+                    $start_time     = $params['start_time'];
+                    $end_time       = $params['end_time'];
+                    $where[] = "(CAST(TIMRW_ZL as time) BETWEEN '" . $start_time . "' AND '". $end_time ."')";
+                }
             }
-            
-            $fetchReady = $db->query("SELECT NPE, TIMRW_ZL, DAYRW_ZL, ID FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where . " ORDER BY TIMRW_ZL ASC");
+            $fetchReady = $db->query("SELECT NPE, TIMRW_ZL, DAYRW_ZL, ID FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . join(' AND ', $where) . " ORDER BY TIMRW_ZL ASC");
         } else {
             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
         }

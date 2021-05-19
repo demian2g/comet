@@ -141,27 +141,21 @@ $app->get('/get',
 
 $app->get('/datetime1',
     function ($request, $response) use ($db) {
-        // return $response
-        //             ->with('Custom Sample TableName');
         $params = $request->getQueryParams();
-
-        // $where = "(CAST(TIMRW as time) BETWEEN '08:00:00' AND '19:59:59') AND (NPE > 0)";
-        // $where = "(CAST(TIMRW as time) BETWEEN '". $start_time . "' AND '". $end_time ."') AND (NPE > 0)";
-        $where = "(CAST(TIMRW as time) BETWEEN '";
-        
         if (!empty($params)) {
+            $where = ['NPE > 0'];
             if ($params['start'] && $params['end']) {
-                
-                $start_time     = $params['start_time'];
-                $end_time       = $params['end_time'];
-                $where .=  $start_time . "' AND '". $end_time ."') AND (NPE > 0)";
-
                 $start          = $params['start'];
                 $end            = $params['end'];
-                $where .= " AND (CAST(DAYRW as date) BETWEEN '" . $start . "' AND '". $end . "')";
+                $where[] = "(CAST(DAYRW as date) BETWEEN '" . $start . "' AND '". $end . "')";
+
+                if ($params['start'] && $params['end']) {
+                    $start_time     = $params['start_time'];
+                    $end_time       = $params['end_time'];
+                    $where[] =  "(CAST(TIMRW as time) BETWEEN '" . $start_time . "' AND '". $end_time ."')";
+                }
             }
-            
-            $fetchReady = $db->query("SELECT NPE, TIMRW, DAYRW, ID FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where . " ORDER BY TIMRW ASC");
+            $fetchReady = $db->query("SELECT NPE, TIMRW, DAYRW, ID FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . join(' AND ', $where) . " ORDER BY TIMRW ASC");
         } else {
             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
         }

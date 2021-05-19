@@ -144,12 +144,12 @@ $app->get('/datetime1',
         $params = $request->getQueryParams();
         if (!empty($params)) {
             $where = ['NPE > 0'];
-            if ($params['start'] && $params['end']) {
+            if (isset($params['start']) && isset($params['end'])) {
                 $start          = $params['start'];
                 $end            = $params['end'];
                 $where[] = "(CAST(DAYRW as date) BETWEEN '" . $start . "' AND '". $end . "')";
 
-                if ($params['start_time'] && $params['end_time']) {
+                if (isset($params['start_time']) && isset($params['end_time'])) {
                     $start_time     = $params['start_time'];
                     $end_time       = $params['end_time'];
                     $where[] =  "(CAST(TIMRW as time) BETWEEN '" . $start_time . "' AND '". $end_time ."')";

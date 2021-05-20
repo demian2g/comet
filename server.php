@@ -2,6 +2,8 @@
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/classes/DB.php';
 
+use GuzzleHttp\Client;
+
 $db = DB::getDB();
 $config = require "config.php";
 
@@ -73,72 +75,6 @@ $app->get('/get',
                 ->with('provide query ?table=Schema.TableName');
 });
 
-// $app->get('/today',
-//     function ($request, $response) use ($db) {
-//         $params = $request->getQueryParams();
-//         $where = [];
-//         if (!empty($params)) {
-//             foreach ($params as $key => $value) {
-//                 $where[] =  '[' . $key . '] = ' . $value;
-//             }
-//             $where = join(' AND ', $where);
-//             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where);
-//         } else {
-//             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
-//         }
-//         if ($fetchReady) {
-//             $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
-//             return $response
-// //                ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
-// //                ->with(gzencode(json_encode($result)));
-//                 ->with($result);
-//         } else {
-//             return $response
-//                 ->with($db->errorInfo());
-//         }
-//     }
-// );
-
-// by igor_rubens
-// $app->get('/today',
-//     function ($request, $response) use ($db) {
-//         // return $response
-//         //             ->with('Custom Sample TableName');
-//         $params = $request->getQueryParams();
-
-//         $where = "(CAST(TIMRW as time) BETWEEN '08:00:00' AND '19:59:59') AND (NPE > 0)";
-//         if (!empty($params)) {
-//             if ($params['start'] && $params['end']) {
-//                 $start = $params['start'];
-//                 $end = $params['end'];
-
-//                 $where .= " AND (CAST(DAYRW as date) BETWEEN '" . $start . "' AND '". $end . "')";
-//             }
-
-//             //foreach ($params as $key => $value) {
-//                 // $where[] =  '[' . $key . '] = ' . $value;
-                
-//                 // (CAST(DAYRW as date) BETWEEN '2021-04-28' AND '2021-04-28') AND (CAST(TIMRW as time) BETWEEN '08:00:00' AND '19:59:59') AND (NPE > 0)
-//                 // $where = "(CAST(DAYRW as date) BETWEEN '2021-04-28' AND '2021-04-28') AND (CAST(TIMRW as time) BETWEEN '08:00:00' AND '19:59:59') AND (NPE > 0)";
-//             //}
-//             // $where = join(' AND ', $where);
-//             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7] WHERE " . $where);
-//         } else {
-//             $fetchReady = $db->query("SELECT * FROM [YKOKS-S-SQL2005.IN.YKOKS.LOCAL].[DCM].[dbo].[KB7]");
-//         }
-//         if ($fetchReady) {
-//             $result = $fetchReady->fetchAll(PDO::FETCH_ASSOC);
-//             return $response
-// //                ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
-// //                ->with(gzencode(json_encode($result)));
-//                     ->with($result);
-//         } else {
-//             return $response
-//                 ->with($db->errorInfo());
-//         }
-//     }
-// );
-
 $app->get('/datetime1',
     function ($request, $response) use ($db) {
         $params = $request->getQueryParams();
@@ -207,5 +143,51 @@ $app->get('/datetime2',
     }
 );
 
+$app->get('/report', function ($request, $response){
+    $DAYS_BEFORE = 14;
+    $defaultParams = [
+        'start' => time() - 60 * 60 * 24 * $DAYS_BEFORE,
+        'end' => time(),
+        'apikey' => 'DDE061B4423755BE8790842709C33A0A0000451C',
+        'event_id' => 25,
+        'index' => 5
+    ];
+    $params = array_merge($defaultParams, $request->getQueryParams());
+    $headers = [
+        'Accept' => 'application/json',
+        'Content-Type' => ' application/json',
+        'X-WH-APIKEY' => $params['apikey'],
+        'X-WH-START' => $params['start'],
+        'X-WH-END' => $params['end']
+    ];
+    $client = new Client([
+        'base_uri' => 'https://batareya77.webhmicloud.com',
+        'headers' => $headers
+    ]);
+    $clientResponse = $client->get('/api/event-data/' . $params['event_id']);
+    $reportResponse = [];
+    if ($clientResponse->getStatusCode() === 200) {
+        $jsonResponse = $clientResponse->getBody();
+        if ($jsonResponse && $data = json_decode($jsonResponse, true)) {
+            $data = array_filter($data, function ($rep) use ($params) {
+                return $rep['end_time'] > 0 && $rep['xtra_regs'][$params['index']]['E' . $params['event_id'] . '.' . $params['index']] > 0;
+            });
+            if (count($data) > 0) {
+                foreach ($data as $item) {
+                    $p = intval($item['xtra_regs'][$params['index']]['E' . $params['event_id'] . '.' . $params['index']]);
+                    $date = date('Ymd', $item['start_time']);
+                    if (!array_key_exists($p, $reportResponse))
+                        $reportResponse[$p] = [];
+                    $reportResponse[$p][$date] = $item['xtra_regs'];
+                }
+                ksort($reportResponse);
+            }
+        }
+    }
+    return $response
+//        ->withHeaders([ 'Content-Type' => 'application/json; charset=utf-8', 'Content-Encoding' => 'gzip' ])
+//        ->with(gzencode(json_encode($reportResponse)));
+        ->with($reportResponse);
+});
 
 $app->run();

@@ -144,7 +144,7 @@ $app->get('/datetime2',
 );
 
 $app->get('/report', function ($request, $response){
-    $DAYS_BEFORE = 14;
+    $DAYS_BEFORE = 7;
     $defaultParams = [
         'start' => time() - 60 * 60 * 24 * $DAYS_BEFORE,
         'end' => time(),
@@ -178,7 +178,7 @@ $app->get('/report', function ($request, $response){
                     $date = date('Ymd', $item['start_time']);
                     if (!array_key_exists($p, $reportResponse))
                         $reportResponse[$p] = [];
-                    $reportResponse[$p][$date] = $item['xtra_regs'];
+                    $reportResponse[$p][$date] = array_map(function ($v){return array_values($v)[0];}, $item['xtra_regs']);
                 }
                 ksort($reportResponse);
             }

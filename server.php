@@ -149,7 +149,7 @@ $app->get('/report', function ($request, $response){
         'start' => time() - 60 * 60 * 24 * $DAYS_BEFORE,
         'end' => time(),
         'apikey' => 'DDE061B4423755BE8790842709C33A0A0000451C',
-        'event_id' => 25,
+        'event_id' => 24,
         'index' => 5
     ];
     $params = array_merge($defaultParams, $request->getQueryParams());
@@ -178,7 +178,15 @@ $app->get('/report', function ($request, $response){
                     $date = date('Ymd', $item['start_time']);
                     if (!array_key_exists($p, $reportResponse))
                         $reportResponse[$p] = [];
-                    $reportResponse[$p][$date] = array_map(function ($v){return array_values($v)[0];}, $item['xtra_regs']);
+//                    $reportResponse[$p][$date] = array_map(function ($v){return array_values($v)[0];}, $item['xtra_regs']);
+                    $reportResponse[$p][$date] = [
+                        intval($date),
+                        $p,
+                        $item['xtra_regs'][0]['E' . $params['event_id'] . '.0'],
+                        $item['xtra_regs'][4]['E' . $params['event_id'] . '.4'],
+                        $item['xtra_regs'][3]['E' . $params['event_id'] . '.3'],
+                        $item['xtra_regs'][2]['E' . $params['event_id'] . '.2'],
+                    ];
                 }
                 ksort($reportResponse);
             }

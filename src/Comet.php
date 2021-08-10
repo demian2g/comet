@@ -69,7 +69,10 @@ class Comet
             }
             self::$config['workers'] = 1; // Windows can't hadnle multiple processes with PHP and have no "nproc" command
         } else {
-        	self::$config['workers'] = $config['workers'] ?? (int) shell_exec('nproc') * 4;
+        	self::$config['workers'] =1;
+//		print_r(self::$config['workers']);
+//		print_r($config['workers']);
+//		exit();
         }
 
         // Using Comet PSR-7 and PSR-17

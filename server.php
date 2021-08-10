@@ -15,6 +15,14 @@ if (is_file('config-local.php')) {
 
 $app = new Comet\Comet($config['PHPProxy']);
 
+$app->post('/kb4',
+    function ($request, $response) {
+        $params = $request->getBody();
+        return $response
+            ->with($params);
+    }
+);
+
 $app->get('/kb7',
     function ($request, $response) use ($db) {
         $params = $request->getQueryParams();

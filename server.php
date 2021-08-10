@@ -15,11 +15,32 @@ if (is_file('config-local.php')) {
 
 $app = new Comet\Comet($config['PHPProxy']);
 
-$app->post('/kb4',
-    function ($request, $response) {
-        $params = $request->getBody();
-        return $response
-            ->with($params);
+$app->get('/kb4',
+    function ($request, $response) use ($db) {
+        $params = $request->getQueryParams();
+        if (!empty($params)) {
+            $signals = [];
+            if (isset($params['amp']) && !empty($params['amp'])) {
+                $signals[1633] = intval($params['amp']);
+            }
+            if (isset($params['n']) && !empty($params['n'])) {
+                $signals[1490] = intval($params['n']);
+            }
+        }
+        if (!empty($signals)) {
+            $result = true;
+            // INSERT INTO [ASUTP].[dbo].[ArhLastVal]([Time],[idSignal],[Value],[LastUpd]) VALUES ('08.08.2021 9:58:19',1633,71,'08.08.2021 9:58:19')
+            foreach ($signals as $signal => $data) {
+                $fetchReady = $db->query("INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);", [
+                    ':signal' => $signal,
+                    ':datetime' => date('d.m.Y G:i:s'),
+                    ':datum' => $data
+                ]);
+                $result = $result && $fetchReady;
+            }
+            return $response->withStatus($result ? 200 : 500)->with($params['amp']);
+        } else
+            return $response->withStatus(400);
     }
 );
 

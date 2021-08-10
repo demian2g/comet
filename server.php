@@ -38,7 +38,7 @@ $app->get('/kb4',
                 ]);
                 $result = $result && $fetchReady;
             }
-            return $response->withStatus($result ? 200 : 500)->with($params['amp']);
+            return $response->withStatus($result ? 200 : 500);
         } else
             return $response->withStatus(400);
     }

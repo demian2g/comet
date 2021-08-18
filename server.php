@@ -199,7 +199,14 @@ $app->get('/report', function ($request, $response){
         $jsonResponse = $clientResponse->getBody();
         if ($jsonResponse && $data = json_decode($jsonResponse, true)) {
             $data = array_filter($data, function ($rep) use ($params) {
-                return $rep['end_time'] > 0 && $rep['xtra_regs'][$params['index']]['E' . $params['event_id'] . '.' . $params['index']] > 0;
+                if (
+                    isset($rep['end_time']) &&
+                    isset($rep['xtra_regs']) &&
+                    isset($rep['end_time'][$params['index']]) &&
+                    isset($rep['xtra_regs'][$params['index']]['E' . $params['event_id'] . '.' . $params['index']])
+                )
+                    return $rep['end_time'] > 0 && $rep['xtra_regs'][$params['index']]['E' . $params['event_id'] . '.' . $params['index']] > 0;
+                return false;
             });
             if (count($data) > 0) {
                 foreach ($data as $item) {

@@ -31,6 +31,9 @@ $app->get('/kb4',
             $result = true;
             // INSERT INTO [ASUTP].[dbo].[ArhLastVal]([Time],[idSignal],[Value],[LastUpd]) VALUES ('08.08.2021 9:58:19',1633,71,'08.08.2021 9:58:19')
             $errors = [];
+            $debug = [];
+
+            $debug['q'] = "INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);";
             foreach ($signals as $signal => $data) {
                 $fetchReady = $db->prepare("INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);");
                 $fetchReady = $fetchReady->execute([
@@ -38,11 +41,16 @@ $app->get('/kb4',
                     ':datetime' => date('d.m.Y G:i:s'),
                     ':datum' => $data
                 ]);
+                $debug[$signal] = [
+                    ':signal' => $signal,
+                    ':datetime' => date('d.m.Y G:i:s'),
+                    ':datum' => $data
+                ];
                 if ($fetchReady === false)
                     $errors[] = $db->errorInfo();
                 $result = $result && $fetchReady;
             }
-            return $result ? $response->withStatus(200) : $response->with($errors)->withStatus(500);
+            return $result ? $response->withStatus(200)->with($debug) : $response->with($debug)->withStatus(500);
         } else
             return $response->withStatus(400);
     }

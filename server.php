@@ -21,10 +21,10 @@ $app->get('/kb4',
         if (!empty($params)) {
             $signals = [];
             if (isset($params['amp']) && !empty($params['amp'])) {
-                $signals[1633] = intval($params['amp']);
+                $signals[1633] = $params['amp'];
             }
             if (isset($params['n']) && !empty($params['n'])) {
-                $signals[1490] = intval($params['n']);
+                $signals[1490] = $params['n'];
             }
         }
         if (!empty($signals)) {

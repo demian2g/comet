@@ -32,7 +32,8 @@ $app->get('/kb4',
             // INSERT INTO [ASUTP].[dbo].[ArhLastVal]([Time],[idSignal],[Value],[LastUpd]) VALUES ('08.08.2021 9:58:19',1633,71,'08.08.2021 9:58:19')
             $errors = [];
             foreach ($signals as $signal => $data) {
-                $fetchReady = $db->query("INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);", [
+                $fetchReady = $db->prepare("INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);");
+                $fetchReady = $fetchReady->execute([
                     ':signal' => $signal,
                     ':datetime' => date('d.m.Y G:i:s'),
                     ':datum' => $data

@@ -41,7 +41,7 @@ $app->get('/kb4',
                     $errors[] = $db->errorInfo();
                 $result = $result && $fetchReady;
             }
-            return $result ? $response->withStatus(200) : $response->with($errors)->withStatus(200);
+            return $result ? $response->withStatus(200) : $response->with($errors)->withStatus(500);
         } else
             return $response->withStatus(400);
     }

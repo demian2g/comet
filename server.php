@@ -21,10 +21,10 @@ $app->get('/kb4',
         if (!empty($params)) {
             $signals = [];
             if (isset($params['amp']) && !empty($params['amp'])) {
-                $signals[1633] = $params['amp'];
+                $signals[1633] = intval($params['amp']);
             }
             if (isset($params['n']) && !empty($params['n'])) {
-                $signals[1490] = $params['n'];
+                $signals[1490] = intval($params['n']);
             }
         }
         if (!empty($signals)) {
@@ -33,9 +33,9 @@ $app->get('/kb4',
             $errors = [];
             $debug = [];
 
-            $debug['q'] = "INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);";
+            $debug['q'] = "INSERT INTO [dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);";
             foreach ($signals as $signal => $data) {
-                $fetchReady = $db->prepare("INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);");
+                $fetchReady = $db->prepare("INSERT INTO [dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);");
                 $fetchReady = $fetchReady->execute([
                     ':signal' => $signal,
                     ':datetime' => date('d.m.Y G:i:s'),

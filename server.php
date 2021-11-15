@@ -36,19 +36,18 @@ $app->get('/kb4',
             $query = "INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);";
             $debug['query'] = $query;
             foreach ($signals as $signal => $data) {
-                try {
-                    $fetchReady = $db->prepare($query);
-                } catch (PDOException $exception) {
-                    $fetchReady = false;
-                    $errors[] = [$signal => [
-                        'info' => $exception->getMessage()
-                    ]];
-                }
                 $debug[$signal] = [
                     ':signal' => $signal,
                     ':datetime' => date('d.m.Y G:i:s'),
                     ':datum' => $data
                 ];
+                try {
+                    $fetchReady = $db->prepare($query);
+                    $debug[$signal]['error'] = 'No Error';
+                } catch (PDOException $exception) {
+                    $fetchReady = false;
+                    $debug[$signal]['error'] = $exception->getMessage();
+                }
                 if ($fetchReady === false) {
                     $executingResult = false;
                 } else {
@@ -58,9 +57,10 @@ $app->get('/kb4',
                         ':datum' => $data
                     ]);
                 }
+                $debug[$signal]['result'] = $executingResult;
                 $result = $result && $executingResult;
             }
-            return $result ? $response->withStatus(200)->with($debug) : $response->with(array_merge($debug, $errors))->withStatus(500);
+            return $result ? $response->withStatus(200)->with($debug) : $response->with($debug + $errors)->withStatus(500);
         } else
             return $response->withStatus(400);
     }

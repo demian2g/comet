@@ -33,14 +33,17 @@ $app->get('/kb4',
             $errors = [];
             $debug = [];
 
-            $query = "INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);";
+            $query = "INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :lastupd);";
             $debug['query'] = $query;
             foreach ($signals as $signal => $data) {
-                $debug[$signal] = [
+                $dt = date('d.m.Y G:i:s');
+                $queryParams = [
                     ':signal' => $signal,
-                    ':datetime' => date('d.m.Y G:i:s'),
+                    ':datetime' => $dt,
+                    ':lastupd' => $dt,
                     ':datum' => $data
                 ];
+                $debug[$signal] = $queryParams;
                 try {
                     $fetchReady = $db->prepare($query);
                     $debug[$signal]['error'] = 'No Error, type ' . gettype($fetchReady);
@@ -51,11 +54,7 @@ $app->get('/kb4',
                 if ($fetchReady === false) {
                     $executingResult = false;
                 } else {
-                    $executingResult = $fetchReady->execute([
-                        ':signal' => $signal,
-                        ':datetime' => date('d.m.Y G:i:s'),
-                        ':datum' => $data
-                    ]);
+                    $executingResult = $fetchReady->execute($queryParams);
                     if ($executingResult !== true)
                         $debug[$signal]['error'] = ['code' => $fetchReady->errorCode(), 'info' => $fetchReady->errorInfo()];
                 }

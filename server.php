@@ -38,16 +38,18 @@ $app->get('/kb4',
                 $fetchReady = $db->prepare("INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);");
                 if ($fetchReady === false)
                     $errors[] = $db->errorInfo();
-                $fetchReady = $fetchReady->execute([
-                    ':signal' => $signal,
-                    ':datetime' => date('d.m.Y G:i:s'),
-                    ':datum' => $data
-                ]);
-                $debug[$signal] = [
-                    ':signal' => $signal,
-                    ':datetime' => date('d.m.Y G:i:s'),
-                    ':datum' => $data
-                ];
+                else {
+                    $fetchReady = $fetchReady->execute([
+                        ':signal' => $signal,
+                        ':datetime' => date('d.m.Y G:i:s'),
+                        ':datum' => $data
+                    ]);
+                    $debug[$signal] = [
+                        ':signal' => $signal,
+                        ':datetime' => date('d.m.Y G:i:s'),
+                        ':datum' => $data
+                    ];
+                }
                 $result = $result && $fetchReady;
                 if ($fetchReady === false)
                     $errors[] = $db->errorInfo();

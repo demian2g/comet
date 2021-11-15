@@ -36,25 +36,29 @@ $app->get('/kb4',
             $query = "INSERT INTO [ASUTP].[dbo].[ArhLastVal] ([Time],[idSignal],[Value],[LastUpd]) VALUES(:datetime, :signal, :datum, :datetime);";
             $debug['query'] = $query;
             foreach ($signals as $signal => $data) {
-                $fetchReady = $db->prepare($query);
+                try {
+                    $fetchReady = $db->prepare($query);
+                } catch (PDOException $exception) {
+                    $fetchReady = false;
+                    $errors[] = [$signal => [
+                        'info' => $exception->getMessage()
+                    ]];
+                }
                 $debug[$signal] = [
                     ':signal' => $signal,
                     ':datetime' => date('d.m.Y G:i:s'),
                     ':datum' => $data
                 ];
                 if ($fetchReady === false) {
-                    $errors[] = [$signal => [
-                        'info' => $db->errorInfo(),
-                        'code' => $db->errorCode(),
-                    ]];
+                    $executingResult = false;
                 } else {
-                    $fetchReady = $fetchReady->execute([
+                    $executingResult = $fetchReady->execute([
                         ':signal' => $signal,
                         ':datetime' => date('d.m.Y G:i:s'),
                         ':datum' => $data
                     ]);
                 }
-                $result = $result && $fetchReady;
+                $result = $result && $executingResult;
             }
             return $result ? $response->withStatus(200)->with($debug) : $response->with($debug + $errors)->withStatus(500);
         } else

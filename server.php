@@ -43,10 +43,10 @@ $app->get('/kb4',
                     ':datum' => $data
                 ];
                 if ($fetchReady === false) {
-                    $errors[$signal] = [
+                    $errors[] = [$signal => [
                         'info' => $db->errorInfo(),
                         'code' => $db->errorCode(),
-                    ];
+                    ]];
                 } else {
                     $fetchReady = $fetchReady->execute([
                         ':signal' => $signal,

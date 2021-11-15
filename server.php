@@ -56,6 +56,8 @@ $app->get('/kb4',
                         ':datetime' => date('d.m.Y G:i:s'),
                         ':datum' => $data
                     ]);
+                    if ($executingResult !== true)
+                        $debug[$signal]['error'] = ['code' => $fetchReady->errorCode(), 'info' => $fetchReady->errorInfo()];
                 }
                 $debug[$signal]['result'] = $executingResult;
                 $result = $result && $executingResult;

@@ -60,7 +60,7 @@ $app->get('/kb4',
                 }
                 $result = $result && $executingResult;
             }
-            return $result ? $response->withStatus(200)->with($debug) : $response->with($debug + $errors)->withStatus(500);
+            return $result ? $response->withStatus(200)->with($debug) : $response->with(array_merge($debug, $errors))->withStatus(500);
         } else
             return $response->withStatus(400);
     }

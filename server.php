@@ -43,7 +43,7 @@ $app->get('/kb4',
                 ];
                 try {
                     $fetchReady = $db->prepare($query);
-                    $debug[$signal]['error'] = 'No Error';
+                    $debug[$signal]['error'] = 'No Error, type ' . gettype($fetchReady);
                 } catch (PDOException $exception) {
                     $fetchReady = false;
                     $debug[$signal]['error'] = $exception->getMessage();
